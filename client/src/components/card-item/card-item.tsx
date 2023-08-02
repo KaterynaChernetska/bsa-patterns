@@ -10,14 +10,31 @@ import { Title } from "../primitives/title";
 import { Container } from "./styled/container";
 import { Content } from "./styled/content";
 import { Footer } from "./styled/footer";
+import { socket } from "../../context/socket";
+import { CardEvent } from "../../common/enums";
 
 type Props = {
   card: Card;
   isDragging: boolean;
   provided: DraggableProvided;
+  listId: string;
 };
 
-export const CardItem = ({ card, isDragging, provided }: Props) => {
+export const CardItem = ({ card, isDragging, provided, listId }: Props) => {
+  const handleDeleteCard = (): void => {
+    socket.emit(CardEvent.DELETE, listId, card.id);
+  };
+
+  const handleRenameCard = (name: string): void => {
+    socket.emit(CardEvent.RENAME, name, listId, card.id);
+  };
+
+  const handleChangeDescription = (text: string): void => {
+    socket.emit(CardEvent.CHANGE_DESCRIPTION, text, listId, card.id);
+  };
+
+  const handleCardCopy = (): void => {};
+  
   return (
     <Container
       className="card-container"
@@ -31,16 +48,16 @@ export const CardItem = ({ card, isDragging, provided }: Props) => {
     >
       <Content>
         <Title
-          onChange={() => {}}
+          onChange={handleRenameCard}
           title={card.name}
           fontSize="large"
           bold={true}
         />
-        <Text text={card.description} onChange={() => {}} />
+        <Text text={card.description} onChange={handleChangeDescription} />
         <Footer>
-          <DeleteButton onClick={() => {}} />
+          <DeleteButton onClick={handleDeleteCard} />
           <Splitter />
-          <CopyButton onClick={() => {}} />
+          <CopyButton onClick={handleCardCopy} />
         </Footer>
       </Content>
     </Container>
