@@ -1,28 +1,16 @@
 {
   "include": [
-    "src",
-    "assets/mockData.ts"
+    "src/**/*"
   ],
   "exclude": [
     "node_modules"
   ],
   "compilerOptions": {
-    "target": "esnext",
-    "lib": [
-      "esnext"
-    ],
-    "outDir": "build",
-    "allowJs": false,
-    "skipLibCheck": true,
-    "strict": false,
-    "noEmit": true,
-    "forceConsistentCasingInFileNames": true,
-    "esModuleInterop": true,
-    "module": "commonjs",
-    "moduleResolution": "node",
-    "resolveJsonModule": true,
-    "isolatedModules": true,
-    "jsx": "preserve",
-    "incremental": true
+    "noImplicitAny": false,
+    "noEmitOnError": true,
+    "removeComments": false,
+    "sourceMap": true,
+    "target": "es5",
+    "outDir": "dist"
   }
 }

@@ -1,4 +1,4 @@
-import { ChangeEvent, useState } from 'react';
+import { ChangeEvent, useEffect, useState } from 'react';
 
 import { useComponentVisible } from '../../hooks/useComponentVisible';
 import { BasicTitle } from './styled/basic-title';
@@ -17,6 +17,8 @@ export const Title = ({ onChange, title, fontSize, bold, width }: Props) => {
   const { ref, isComponentVisible, setIsComponentVisible } =
     useComponentVisible(false);
   const [value, setValue] = useState(title);
+
+  useEffect(() => setValue(title), [title]);
 
   const onEdit = (e: ChangeEvent<HTMLInputElement>) => {
     setValue(e.target.value);

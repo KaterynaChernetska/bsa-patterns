@@ -18,20 +18,14 @@
 npm i
 ```
 
-2. Configure git hooks (Used to run prettier and linter on commits)
-
-```
-npx simple-git-hooks
-```
-
-3. Start backend
+2. Start backend
 
 ```
 npm start -w server
 ```
 
-4. Start client
+3. Start client
 
 ```
-npm run dev -w client
+npm start -w client
 ```

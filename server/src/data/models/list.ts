@@ -13,6 +13,12 @@ class List {
     this.name = name;
     this.id = randomUUID();
   }
+
+  setCards(cards: Card[]) {
+    this.cards = cards;
+
+    return this;
+  }
 }
 
 export { List };

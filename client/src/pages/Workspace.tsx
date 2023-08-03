@@ -2,30 +2,40 @@ import type {
   DraggableLocation,
   DroppableProvided,
   DropResult,
-} from '@hello-pangea/dnd';
-import { DragDropContext, Droppable } from '@hello-pangea/dnd';
-import React, { useContext, useEffect, useState } from 'react';
+} from "@hello-pangea/dnd";
+import { DragDropContext, Droppable } from "@hello-pangea/dnd";
+import React, { useContext, useEffect, useState } from "react";
 
-import { CardEvent, ListEvent } from '../common/enums';
-import type { List } from '../common/types';
-import { Column } from '../components/column/column';
-import { ColumnCreator } from '../components/column-creator/column-creator';
-import { SocketContext } from '../context/socket';
-import { reorderService } from '../services/reorder.service';
-import { Container } from './styled/container';
+import { CardEvent, ListEvent } from "../common/enums";
+import type { List } from "../common/types";
+import { Column } from "../components/column/column";
+import { ColumnCreator } from "../components/column-creator/column-creator";
+import { SocketContext } from "../context/socket";
+import { reorderCards, reorderLists } from "../services/reorder.service";
+import { Container } from "./styled/container";
 
 export const Workspace = () => {
   const [lists, setLists] = useState<List[]>([]);
 
   const socket = useContext(SocketContext);
 
+  const onCreateList = (listName: string): void => {
+    socket.emit(ListEvent.CREATE, listName);
+  };
+
   useEffect(() => {
     socket.emit(ListEvent.GET, (lists: List[]) => setLists(lists));
     socket.on(ListEvent.UPDATE, (lists: List[]) => setLists(lists));
+
+    return () => {
+      socket.removeAllListeners(ListEvent.UPDATE).close();
+    };
   }, []);
 
   const onDragEnd = (result: DropResult) => {
-    if (!result.destination) return;
+    if (!result.destination) {
+      return;
+    }
 
     const source: DraggableLocation = result.source;
     const destination: DraggableLocation = result.destination;
@@ -34,18 +44,22 @@ export const Workspace = () => {
       source.droppableId === destination.droppableId &&
       source.index === destination?.index;
 
-    if (isNotMoved) return;
+    if (isNotMoved) {
+      return;
+    }
 
-    const isReorderColumns = result.type === 'COLUMN';
+    const isReorderLists = result.type === "COLUMN";
 
-    if (isReorderColumns) {
-      setLists(reorderService.reorder(lists, source.index, destination.index));
+    if (isReorderLists) {
+      setLists(
+        reorderLists(lists, source.index, destination.index)
+      );
       socket.emit(ListEvent.REORDER, source.index, destination.index);
 
       return;
     }
 
-    setLists(reorderService.reorderCards(lists, source, destination));
+    setLists(reorderCards(lists, source, destination));
     socket.emit(CardEvent.REORDER, {
       sourceListId: source.droppableId,
       destinationListId: destination.droppableId,
@@ -59,7 +73,11 @@ export const Workspace = () => {
       <DragDropContext onDragEnd={onDragEnd}>
         <Droppable droppableId="board" type="COLUMN" direction="horizontal">
           {(provided: DroppableProvided) => (
-            <Container className="workspace-container" ref={provided.innerRef} {...provided.droppableProps}>
+            <Container
+              className="workspace-container"
+              ref={provided.innerRef}
+              {...provided.droppableProps}
+            >
               {lists.map((list: List, index: number) => (
                 <Column
                   key={list.id}
@@ -70,7 +88,7 @@ export const Workspace = () => {
                 />
               ))}
               {provided.placeholder}
-              <ColumnCreator onCreateList={() => {}} />
+              <ColumnCreator onCreateList={onCreateList} />
             </Container>
           )}
         </Droppable>

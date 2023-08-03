@@ -10,9 +10,10 @@ import { CardItem } from '../../card-item/card-item';
 
 type Props = {
   cards: Card[];
+  listId:string;
 };
 
-const Cards = React.memo(({ cards }: Props) => (
+const Cards = ({ cards, listId }: Props) => (
   <React.Fragment>
     {cards.map((card: Card, index: number) => (
       <Draggable key={card.id} draggableId={card.id} index={index}>
@@ -21,6 +22,7 @@ const Cards = React.memo(({ cards }: Props) => (
           dragSnapshot: DraggableStateSnapshot,
         ) => (
           <CardItem
+          listId={listId}
             key={card.id}
             card={card}
             isDragging={dragSnapshot.isDragging}
@@ -30,6 +32,6 @@ const Cards = React.memo(({ cards }: Props) => (
       </Draggable>
     ))}
   </React.Fragment>
-));
+);
 
 export { Cards };
