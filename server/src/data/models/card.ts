@@ -1,4 +1,4 @@
-import { randomUUID } from 'crypto';
+import { randomUUID } from "crypto";
 
 class Card {
   public id: string;
@@ -14,6 +14,16 @@ class Card {
     this.description = description;
     this.createdAt = new Date();
     this.id = randomUUID();
+  }
+
+  // PATTERN:{PROTOTYPE}
+  public clone(): Card {
+    const clone = Object.create(this);
+    clone.description = this.description;
+    clone.createdAt = new Date();
+    clone.id = randomUUID();
+    clone.name = this.name;
+    return clone;
   }
 }
 
