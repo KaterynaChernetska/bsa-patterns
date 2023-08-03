@@ -33,8 +33,10 @@ export const CardItem = ({ card, isDragging, provided, listId }: Props) => {
     socket.emit(CardEvent.CHANGE_DESCRIPTION, text, listId, card.id);
   };
 
-  const handleCardCopy = (): void => {};
-  
+  const handleCardCopy = (): void => {
+    socket.emit(CardEvent.MAKE_COPY, listId, card.id);
+  };
+
   return (
     <Container
       className="card-container"

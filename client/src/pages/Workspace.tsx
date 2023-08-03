@@ -11,7 +11,7 @@ import type { List } from "../common/types";
 import { Column } from "../components/column/column";
 import { ColumnCreator } from "../components/column-creator/column-creator";
 import { SocketContext } from "../context/socket";
-import { reorderService } from "../services/reorder.service";
+import { reorderCards, reorderLists } from "../services/reorder.service";
 import { Container } from "./styled/container";
 
 export const Workspace = () => {
@@ -52,14 +52,14 @@ export const Workspace = () => {
 
     if (isReorderLists) {
       setLists(
-        reorderService.reorderLists(lists, source.index, destination.index)
+        reorderLists(lists, source.index, destination.index)
       );
       socket.emit(ListEvent.REORDER, source.index, destination.index);
 
       return;
     }
 
-    setLists(reorderService.reorderCards(lists, source, destination));
+    setLists(reorderCards(lists, source, destination));
     socket.emit(CardEvent.REORDER, {
       sourceListId: source.droppableId,
       destinationListId: destination.droppableId,
